@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<!-- My CSS -->
+	<link rel="stylesheet" href="style.css">
+
+	<title>AdminHub</title>
+</head>
+<body>
+    <section id="sidebar">
+		<a href="index.html" class="brand">
+			<i class='bx bx-store'></i>
+			<span class="text">My Store</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="index.html" id="dashboard-link">
+					<i class='bx bxs-dashboard' ></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="products.html"  id="store-link">
+					<i class='bx bx-cube'></i>
+
+					<span class="text">Products</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="inventory.html" id="inventory">
+					<i class='bx bx-pie-chart-alt-2'></i>
+
+
+					<span class="text">Inventory</span>
+				</a>
+			</li>
+            <li>
+				<a href="custumors.html">
+					<i class='bx bx-group'></i>
+					<span class="text">Custumors</span>
+				</a>
+			</li>
+			<li>
+				<a href="suppliers.html">
+					<i class='bx bx-briefcase'></i>
+
+
+					<span class="text">Suppliers</span>
+				</a>
+			</li>
+			
+			
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout">
+					<i class='bx bx-log-out'></i>
+
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+
+
+	<!-- CONTENT -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu' ></i>
+			<a href="#" class="nav-link">Categories</a>
+			<form action="#">
+			</form>
+			
+			<a href="#" class="notification">
+			</a>
+			<a href="#" class="profile">
+				
+			</a>
+		</nav>
+
+    <div id="store-section">
+        <header>
+            <div class="logo-products">
+                <div class="products">Inventory</div>
+            </div>
+            <div class="container">
+                <input id="searchInput"class="input" name="text" type="text" required="" />
+                <label class="label">SEARCH BY NAME</label>
+            </div>
+        </header>
+
+        <main>
+            <div class="table-actions">
+                <button class="button" id="addNew">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="1.25rem"
+                      height="1.25rem"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    >
+                      <path d="M12 19v-7m0 0V5m0 7H5m7 0h7"></path>
+                    </svg>
+                    PRODUCT
+                  </button>
+            </div>
+
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Product rows will go here -->
+                </tbody>
+            </table>
+            
+
+            
+        </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          const searchInput = document.getElementById('searchInput');
+          const productTable = document.getElementById('productTable');
+          const tableBody = productTable.querySelector('tbody');
+          let allProducts = [];
+
+          function loadProducts() {
+              allProducts = JSON.parse(localStorage.getItem('Products')) || [];
+              renderProducts(allProducts);
+          }
+
+          function renderProducts(products) {
+              tableBody.innerHTML = '';
+              products.forEach(product => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+                      <td>${product.id}</td>
+                      <td>${product.name}</td>
+                      <td>${product.items}</td>
+                      <td>${product.marque}</td>
+                      <td class="quantity ${getQuantityClass(product.quantity)}">${product.quantity}</td>
+                      <td>${product.price}</td>
+                  `;
+                  tableBody.appendChild(row);
+              });
+          }
+
+          function getQuantityClass(quantity) {
+              if (quantity == 0) return 'no-quantity';
+              if (quantity < 5) return 'low-quantity';
+              return 'high-quantity';
+          }
+
+          function searchProducts(query) {
+              query = query.toLowerCase();
+              const filteredProducts = allProducts.filter(product => 
+                  product.name.toLowerCase().includes(query)
+              );
+              renderProducts(filteredProducts);
+          }
+
+          searchInput.addEventListener('input', (e) => {
+              searchProducts(e.target.value);
+          });
+
+          document.getElementById("addNew").addEventListener("click", () => {
+              window.location.href = 'add_new_product.html';
+          });
+
+        //   document.getElementById("clearLocalStorage").addEventListener("click", () => {
+        //       if (confirm("Are you sure you want to clear all data?")) {
+        //           localStorage.removeItem('Products');
+        //           loadProducts();
+        //       }
+        //   });
+
+          loadProducts();
+      });
+  </script>
+
+    
+<style>
+
+        .table-actions{
+        display:flex;
+        justify-content:flex-end;
+        margin-bottom:10px;}
+
+           body {
+               font-family: Arial, sans-serif;
+               margin: 0;
+               padding: 0;
+           }
+           header {
+               display: flex;
+               justify-content: space-between;
+               padding: 20px;
+           }
+           .products{
+            font-size: xx-large;
+            text-align: center;
+            font-weight: bold;
+
+        }
+           #productTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #FFFFFF; /* White background for clean look */
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #FFFFFF; /* White background for clean look */
+}
+
+#productTable th {
+    color:#8493a5;
+    text-transform: uppercase;
+    font-weight: bold;
+    background-color: #f6f9fc; /* Light blue background for the header */
+    font-size: 15px;
+}
+
+#productTable td {
+    padding: 10px;
+    text-align: center;
+    color: #333333; /* Dark gray text color for better readability */
+}
+
+#productTable th, #productTable td {
+    padding: 10px;
+    text-align: center;
+    border-right: 1px solid #dddddd; /* Soft gold border */
+    border-top: 1px solid #dddddd; /* Soft gold border on top */
+    border-bottom: 1px solid #dddddd;
+}
+
+#productTable th:last-child, #productTable td:last-child {
+    border-right: none; /* Remove right border on the last column */
+}
+
+#productTable tr:first-child {
+    border-top: none; /* Remove top border on the first row */
+    background-color:none;
+}
+
+#productTable tr:hover td {
+     color:#0298cf;
+     cursor: pointer;
+     background-color: #f6f9fc; /* Light blue background for the header */
+}
+
+/* #productTable tbody tr:nth-child(odd) {
+    /* background-color: #FFFFFF; White background for odd rows */
+ */
+#productTable tbody tr:nth-child(even) {
+    background-color: #F0F0F0; /* Light gray for even rows */
+}
+
+#productTable tbody tr td:nth-child(4) {
+    font-weight: bold;
+    color:#0298cf
+}
+
+          /* From Uiverse.io by McHaXYT */ 
+#addNew {
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 0.625rem 1rem;
+  color: #FFFFFF; /* Ensures the text is visible on the gradient */
+  background-color: #0298cf; /* Fallback solid color */
+  background: linear-gradient(144deg, #120a35, #1c5274 50%, #00BFFF); /* Gradient with #0298cf */
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.35s linear;
+}
+
+#addNew:hover {
+  box-shadow: inset 0 5px 25px 0 #2806bd, inset 0 10px 15px 0px #5b42f3,
+    inset 0 5px 25px 0px #00ddeb;
+}
+
+/* From Uiverse.io by ElsayedShamsEldeen */ 
+.container {
+ display: flex;
+ flex-direction: column;
+ gap: 7px;
+ position: relative;
+ 
+}
+.container .label {
+ font-size: 15px;
+ padding-left: 10px;
+ position: absolute;
+ top: 13px;
+ transition: 0.3s;
+ pointer-events: none;
+}
+.input {
+ width: 200px;
+ height: 45px;
+ border: none;
+ outline: none;
+ padding: 0px 7px;
+ border-radius: 6px;
+ color: white;
+ font-size: 15px;
+ background-color: transparent;
+ box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
+   -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+.input:focus {
+ border: 2px solid transparent;
+ color:blue;
+ box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
+   -1px -1px 6px rgba(255, 255, 255, 0.4), inset 3px 3px 10px rgba(0, 0, 0, 1),
+   inset -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+.container .input:valid ~ .label,
+.container .input:focus ~ .label {
+ transition: 0.3s;
+ padding-left: 2px;
+ transform: translate(15px, -27px);
+ letter-spacing: 5px;
+ font-weight: bold;
+}
+.container .input:valid,
+.container .input:focus {
+ box-shadow: 3px 3px 10px rgba(0, 0, 0, 1),
+   -1px -1px 6px rgba(255, 255, 255, 0.4), inset 3px 3px 10px rgba(0, 0, 0, 1),
+   inset -1px -1px 6px rgba(255, 255, 255, 0.4);
+}
+/*clr btn*/
+#clearLocalStorage  {
+ border: none;
+ width: 140px;
+ height: 50px;
+ color: #fff;
+ z-index: 1;
+ display: flex;
+ background: #000;
+ position: relative;
+ cursor: pointer;
+}
+#clearLocalStorage p {
+ margin: 0 auto;
+ align-self: center;
+ font-size: 17px;
+ font-weight: bold;
+ text-align: center;
+}
+#clearLocalStorage::after {
+ position: absolute;
+ content: "";
+ width: 100%;
+ z-index: -1;
+ height: 10%;
+ bottom: 0;
+ clip-path: polygon(
+   0% 74%,
+   4% 75%,
+   8% 76%,
+   11% 77%,
+   15% 78%,
+   20% 78%,
+   25% 77%,
+   32% 77%,
+   37% 75%,
+   40% 74%,
+   43% 74%,
+   46% 73%,
+   52% 72%,
+   57% 72%,
+   65% 74%,
+   66% 75%,
+   71% 78%,
+   75% 82%,
+   81% 86%,
+   83% 88%,
+   88% 91%,
+   90% 94%,
+   94% 96%,
+   98% 98%,
+   100% 100%,
+   82% 100%,
+   0 100%
+ );
+ background:gold;
+ transition: 0.2s ease;
+}
+#clearLocalStorage::before {
+ position: absolute;
+ content: "";
+ /*   bottom: 80%; */
+ transform: rotate(180deg);
+ width: 100%;
+ height: 10%;
+ transition: 0.2s ease;
+ /*   bottom:; */
+ z-index: -1;
+ clip-path: polygon(
+   0% 74%,
+   4% 75%,
+   8% 76%,
+   11% 77%,
+   15% 78%,
+   20% 78%,
+   25% 77%,
+   32% 77%,
+   37% 75%,
+   40% 74%,
+   43% 74%,
+   46% 73%,
+   52% 72%,
+   57% 72%,
+   65% 74%,
+   66% 75%,
+   71% 78%,
+   75% 82%,
+   81% 86%,
+   83% 88%,
+   88% 91%,
+   90% 94%,
+   94% 96%,
+   98% 98%,
+   100% 100%,
+   82% 100%,
+   0 100%
+ );
+ background:gold;
+}
+#clearLocalStorage:hover::after {
+ clip-path: polygon(
+   0 30%,
+   9% 34%,
+   7% 39%,
+   11% 43%,
+   13% 33%,
+   17% 30%,
+   24% 34%,
+   25% 35%,
+   30% 31%,
+   30% 38%,
+   39% 33%,
+   35% 43%,
+   43% 45%,
+   55% 46%,
+   65% 74%,
+   67% 66%,
+   81% 57%,
+   75% 82%,
+   81% 86%,
+   83% 88%,
+   88% 91%,
+   90% 94%,
+   94% 96%,
+   98% 98%,
+   100% 100%,
+   82% 100%,
+   0 100%
+ );
+ height: 80%;
+}
+#clearLocalStorage:hover::before {
+ clip-path: polygon(
+   0 30%,
+   9% 34%,
+   7% 39%,
+   11% 43%,
+   13% 33%,
+   17% 30%,
+   24% 34%,
+   25% 35%,
+   30% 31%,
+   30% 38%,
+   39% 33%,
+   35% 43%,
+   43% 45%,
+   55% 46%,
+   65% 74%,
+   67% 66%,
+   81% 57%,
+   75% 82%,
+   81% 86%,
+   83% 88%,
+   88% 91%,
+   90% 94%,
+   94% 96%,
+   98% 98%,
+   100% 100%,
+   82% 100%,
+   0 100%
+ );
+ height: 80%;
+}
+.low-quantity {
+               color: #c2a87e;
+           } 
+           .no-quantity {
+               color: #a43d4c;;
+           }
+           .high-quantity {
+               color: #70c1d3;
+           }
+</style>
+<script src="script.js"></script>
+</body>
+</html>
+

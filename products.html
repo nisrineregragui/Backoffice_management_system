@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style2.css">
+  
+  <title>PRODUCT LIST</title>
+</head>
+<body>
+	<section id="sidebar">
+		<a href="index.html" class="brand">
+			<i class='bx bx-store'></i>
+			<span class="text">My Store</span>
+		</a>
+		<ul class="side-menu top">
+			<li>
+				<a href="index.html" id="dashboard-link">
+					<i class='bx bxs-dashboard' ></i>
+					<span class="text">Dashboard</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="products.html"  id="store-link">
+					<i class='bx bx-cube'></i>
+
+					<span class="text">Products</span>
+				</a>
+			</li>
+			<li>
+				<a href="inventory.html" id="inventory">
+					<i class='bx bx-pie-chart-alt-2'></i>
+
+
+					<span class="text">Inventory</span>
+				</a>
+			</li>
+            <li>
+				<a href="custumors.html">
+					<i class='bx bx-group'></i>
+					<span class="text">Custumors</span>
+				</a>
+			</li>
+			<li>
+				<a href="suppliers.html">
+					<i class='bx bx-briefcase'></i>
+
+
+					<span class="text">Suppliers</span>
+				</a>
+			</li>
+			
+			
+		</ul>
+		<ul class="side-menu">
+			<li>
+				<a href="#" class="logout">
+					<i class='bx bx-log-out'></i>
+
+					<span class="text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+
+
+	<!-- CONTENT -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu' ></i>
+			<a href="#" class="nav-link">Categories</a>
+			<form action="#">
+			</form>
+			
+			<a href="#" class="notification">
+			</a>
+			<a href="#" class="profile">
+				
+			</a>
+		</nav>
+		
+    <!-- MAIN CONTENT -->
+    <body>
+        <div class="container">
+            <div class="title">PRODUCT LIST</div>
+            <a href="products_form.html" class="add-btn">Add New Product</a>
+            <div class="listProduct">
+    
+            </div>
+        </div>
+    
+        
+    
+       <script>
+       document.addEventListener("DOMContentLoaded", () => {
+        const listProductHTML = document.querySelector('.listProduct');
+    
+        // Fetch products from localStorage
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+    
+        function addDataToHTML() {
+    
+            // Add products to the HTML
+            if (products.length > 0) {
+                products.forEach((product, index) => {
+                    const newProduct = document.createElement('a');
+                    newProduct.href = `detail.html?index=${index}`; // Use index instead of id
+                    newProduct.classList.add('item');
+                    newProduct.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}">
+                        <h2>${product.name}</h2>
+                        <div class="price">$${product.price.toFixed(2)}</div>
+                    `;
+                    listProductHTML.appendChild(newProduct);
+                });
+            } else {
+                listProductHTML.innerHTML = "<p>No products available.</p>";
+            }
+        }
+    
+        addDataToHTML();
+    });
+    
+    </script>
+    </body>
+    </html>
+  <script src="script.js"></script>
+</body>
+</html>

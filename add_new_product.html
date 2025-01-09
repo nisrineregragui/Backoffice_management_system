@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Product</title>
+    <link rel="stylesheet" href="form_style.css">
+</head>
+<body>
+    <main class="product-management">
+        <h1 class="title">Add New Product</h1>
+        
+        <form id="productForm">
+            <div class="form-group">
+                <div class="error-message" id="nameError"></div>
+                <div class="input-container">
+                    <input type="text" id="name" placeholder="Product Name" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="error-message" id="itemsError"></div>
+                <div class="input-container">
+                    <select id="items" required>
+                        <option value="Watches">Watches</option>
+                        <option value="Bags">Bags</option>
+                        <option value="Jewelry">Jewelry</option>
+                        <option value="Belts">Belts</option>
+                        <option value="Scarfs">Scarfs</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="error-message" id="marqueError"></div>
+                <div class="input-container">
+                    <select id="marque" required>
+                        <option value="Louis Vuitton">Louis Vuitton</option>
+                        <option value="Chanel">Chanel</option>
+                        <option value="Gucci">Gucci</option>
+                        <option value="Hermès">Hermès</option>
+                        <option value="Prada">Prada</option>
+                        <option value="Dior">Dior</option>
+                        <option value="Cartier">Cartier</option>
+                        <option value="Versace">Versace</option>
+                        <option value="Burberry">Burberry</option>
+                        <option value="Balenciaga">Balenciaga</option>
+                        <option value="Yves Saint Laurent">Yves Saint Laurent</option>
+                        <option value="Fendi">Fendi</option>
+                        <option value="Rolex">Rolex</option>
+                        <option value="Bvlgari">Bvlgari</option>
+                        <option value="Givenchy">Givenchy</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="error-message" id="quantityError"></div>
+                <div class="input-container">
+                    <input type="text" id="quantity" placeholder="Quantity" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="error-message" id="priceError"></div>
+                <div class="input-container">
+                    <input type="text" id="price" placeholder="Price (MAD)" required>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="cancelproduct" class="cancel-button">Cancel</button>
+                <button type="button" id="saveproduct">Save</button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        let Products = JSON.parse(localStorage.getItem('Products')) || [];
+
+        function validateName(name) {
+            const namePattern = /^[A-Za-zÀ-ÿ\s]+$/;
+            return namePattern.test(name);
+        }
+
+        function validatePrice(price) {
+            const pricePattern = /^[0-9]+$/;
+            return pricePattern.test(price);
+        }
+
+        function displayError(fieldId, message) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            errorElement.textContent = message;
+        }
+
+        function clearError(fieldId) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            errorElement.textContent = '';
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById("name").value;
+            const items = document.getElementById("items").value;
+            const marque = document.getElementById("marque").value;
+            const quantity = document.getElementById("quantity").value;
+            const price = document.getElementById("price").value;
+
+            if (!name) {
+                displayError("name", "Product name is required!");
+                isValid = false;
+            } else if (!validateName(name)) {
+                displayError("name", "Name must contain only letters and spaces!");
+                isValid = false;
+            } else {
+                clearError("name");
+            }
+
+            if (!quantity) {
+                displayError("quantity", "Quantity is required!");
+                isValid = false;
+            } else if (!validatePrice(quantity)) {
+                displayError("quantity", "Quantity must be a valid number!");
+                isValid = false;
+            } else {
+                clearError("quantity");
+            }
+
+            if (!price) {
+                displayError("price", "Price is required!");
+                isValid = false;
+            } else if (!validatePrice(price)) {
+                displayError("price", "Price must be a valid number!");
+                isValid = false;
+            } else {
+                clearError("price");
+            }
+
+            return isValid;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById("saveproduct").addEventListener("click", () => {
+                if (validateForm()) {
+                    const name = document.getElementById("name").value;
+                    const items = document.getElementById("items").value;
+                    const marque = document.getElementById("marque").value;
+                    const quantity = document.getElementById("quantity").value;
+                    const price = document.getElementById("price").value;
+
+                    const newProduct = {
+                        id: Products.length + 1,
+                        name: name,
+                        items: items,
+                        quantity: quantity,
+                        marque: marque,
+                        price: price
+                    };
+
+                    Products.push(newProduct);
+                    localStorage.setItem('Products', JSON.stringify(Products));
+                    alert("Product added successfully!");
+
+                    document.getElementById("productForm").reset();
+
+                    const errorElements = document.querySelectorAll('.error-message');
+                    errorElements.forEach(element => element.textContent = '');
+
+                    window.location.href = 'inventory.html';
+                }
+            });
+
+            document.getElementById("cancelproduct").addEventListener("click", () => {
+                if (confirm("Are you sure you want to cancel? All entered data will be lost.")) {
+                    window.location.href = 'inventory.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

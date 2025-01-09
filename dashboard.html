@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .chart-container {
+            width: 45%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <div class="chart-container">
+        <canvas id="salesChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="productChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="supplierChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="orderStatusChart"></canvas>
+    </div>
+    <script>document.addEventListener('DOMContentLoaded', function() {
+        // Helper function to get random color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    
+        // Sales Chart
+        function createSalesChart() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const salesData = {};
+    
+            orders.forEach(order => {
+                const date = new Date(order.orderDate);
+                const month = date.toLocaleString('default', { month: 'short' });
+                if (salesData[month]) {
+                    salesData[month] += parseFloat(order.totalAmount);
+                } else {
+                    salesData[month] = parseFloat(order.totalAmount);
+                }
+            });
+    
+            const labels = Object.keys(salesData);
+            const data = Object.values(salesData);
+    
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Sales',
+                        data: data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Sales'
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Product Chart
+        function createProductChart() {
+            const products = JSON.parse(localStorage.getItem('Products')) || [];
+            const productData = {};
+    
+            products.forEach(product => {
+                if (productData[product.name]) {
+                    productData[product.name] += parseInt(product.quantity);
+                } else {
+                    productData[product.name] = parseInt(product.quantity);
+                }
+            });
+    
+            const labels = Object.keys(productData);
+            const data = Object.values(productData);
+            const backgroundColors = labels.map(() => getRandomColor());
+    
+            const ctx = document.getElementById('productChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Product Quantity',
+                        data: data,
+                        backgroundColor: backgroundColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Product Inventory'
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Supplier Chart
+        function createSupplierChart() {
+            const suppliers = JSON.parse(localStorage.getItem('suppliers')) || [];
+            const supplierData = {};
+    
+            suppliers.forEach(supplier => {
+                if (supplierData[supplier.name]) {
+                    supplierData[supplier.name]++;
+                } else {
+                    supplierData[supplier.name] = 1;
+                }
+            });
+    
+            const labels = Object.keys(supplierData);
+            const data = Object.values(supplierData);
+            const backgroundColors = labels.map(() => getRandomColor());
+    
+            const ctx = document.getElementById('supplierChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Supplier Distribution'
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Order Status Chart
+        function createOrderStatusChart() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const statusData = {
+                'Pending': 0,
+                'Processing': 0,
+                'Shipped': 0,
+                'Delivered': 0
+            };
+    
+            orders.forEach(order => {
+                if (statusData[order.status] !== undefined) {
+                    statusData[order.status]++;
+                }
+            });
+    
+            const labels = Object.keys(statusData);
+            const data = Object.values(statusData);
+            const backgroundColors = labels.map(() => getRandomColor());
+    
+            const ctx = document.getElementById('orderStatusChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Order Status'
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Create all charts
+        createSalesChart();
+        createProductChart();
+        createSupplierChart();
+        createOrderStatusChart();
+    });</script>
+</body>
+</html>
