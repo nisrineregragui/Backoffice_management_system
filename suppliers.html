@@ -56,7 +56,7 @@
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="#" class="logout">
+				<a href="login.html" class="logout">
 					<i class='bx bx-log-out'></i>
 
 					<span class="text">Logout</span>
@@ -90,13 +90,22 @@
             margin: 0;
             padding: 0;
         }
+        
         .container {
             justify-content:center;
         align-items: center;
         }
         h1 {
             text-align: center;
+            color: #333333;
         }
+        #clientTable {
+                width: 95%;
+                border-collapse: collapse;
+                align-items: center;
+                background-color: #FFFFFF;
+                margin-top: 120px;
+                margin-left: 20px;}
         table {
             width: 95%;
     border-collapse: collapse;
@@ -198,14 +207,19 @@ tbody tr td:nth-child(4) {
 </head>
 <body>
     <div class="container">
-        <h1>supplier Management</h1>
+        
         <div class="action-buttons">
-            <button id="addClient">Add supplier</button>
+            
         </div>
         <table id="clientTable">
             <thead>
+                <button id="addClient">Add supplier</button>
+                <h1>supplier Management</h1>
+                
                 <tr>
                     <th>Name</th>
+                    
+                
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Products</th>
@@ -217,7 +231,7 @@ tbody tr td:nth-child(4) {
             <tbody></tbody>
         </table>
         <div class="action-buttons">
-            <button id="deleteAll">Delete All</button>
+            <!-- <button id="deleteAll">Delete All</button> -->
         </div>
     </div>
 
@@ -227,7 +241,7 @@ tbody tr td:nth-child(4) {
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
     const supplierTable = document.getElementById('clientTable');
     const tableBody = supplierTable.querySelector('tbody');
     let allsuppliers = [];
@@ -236,44 +250,96 @@ tbody tr td:nth-child(4) {
         allsuppliers = JSON.parse(localStorage.getItem('suppliers')) || [];
         rendersuppliers(allsuppliers);
     }
-    function rendersuppliers(suppliers) {
-    tableBody.innerHTML = '';
 
-    if (suppliers.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No suppliers found</td></tr>`;
-        return;
+    function rendersuppliers(suppliers) {
+        tableBody.innerHTML = '';
+
+        if (suppliers.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No suppliers found</td></tr>`;
+            return;
+        }
+
+        suppliers.forEach(supplier => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${supplier.name}</td>
+                <td>${supplier.contact}</td>
+                <td>${supplier.phone}</td>
+                <td>${supplier.products}</td>
+                <td>${supplier.address}</td>
+                <td>${supplier.payment}</td>
+                <td>${supplier.date}</td>
+                <td>
+                      <button class="edit-btn" data-id="${supplier.id}"><i class='bx bx-edit'></i></button>
+            <button class="delete-btn" data-id="${supplier.id}"><i class='bx bx-trash'></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        addButtonListeners();
     }
 
-    suppliers.forEach(supplier => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${supplier.name}</td>
-            <td>${supplier.contact}</td>
-            
-            <td>${supplier.phone}</td>
-            <td>${supplier.products}</td>
-            <td>${supplier.address}</td>
-            <td>${supplier.payment}</td>
-            <td>${supplier.date}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
+    function addButtonListeners() {
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', handleEdit);
+        });
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', handleDelete);
+        });
+    }
 
+    function handleEdit(e) {
+    const supplierId = e.currentTarget.getAttribute('data-id');
+    const supplier = allsuppliers.find(s => s.id == supplierId); // Problem here
+        console.log('Supplier ID:', supplierId);
+        console.log('All Suppliers:', allsuppliers);
+        
+        if (supplier) {
+      
+
+            const newName = prompt('Enter new name for supplier:', supplier.name);
+            const newEmail = prompt('Enter new email for supplier:', supplier.contact);
+            const newPhone = prompt('Enter new phone for supplier:', supplier.phone);
+            const newProducts = prompt('Enter new products for supplier:', supplier.products);
+            const newAddress = prompt('Enter new address for supplier:', supplier.address);
+            const newPayment = prompt('Enter new payment method for supplier:', supplier.payment);
+            const newDate = prompt('Enter new contract date for supplier:', supplier.date);
+
+            if (newName) supplier.name = newName;
+            if (newEmail) supplier.contact = newEmail;
+            if (newPhone) supplier.phone = newPhone;
+            if (newProducts) supplier.products = newProducts;
+            if (newAddress) supplier.address = newAddress;
+            if (newPayment) supplier.payment = newPayment;
+            if (newDate) supplier.date = newDate;
+
+            updateLocalStorage();
+            rendersuppliers(allsuppliers);
+        }
+    }
+
+    function handleDelete(e) {
+        const supplierId = e.currentTarget.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this supplier?')) {
+            allsuppliers = allsuppliers.filter(s => s.id != supplierId);
+            updateLocalStorage();
+            rendersuppliers(allsuppliers);
+        }
+    }
+
+    function updateLocalStorage() {
+        localStorage.setItem('suppliers', JSON.stringify(allsuppliers));
+    }
 
     document.getElementById('addClient').addEventListener('click', () => {
         console.log("Redirecting to 'add_new_client.html'");
-        window.location.href = 'supplier_form.html'; // Ensure the file exists in the correct path
+        window.location.href = 'supplier_form.html';
     });
 
     loadsuppliers();
 });
-document.getElementById('deleteAll').addEventListener('click', () => {
-    localStorage.removeItem('suppliers');
-    loadsuppliers();
-});
 
-           
+     
     </script>
     <script src="script.js"></script>
 </body>
