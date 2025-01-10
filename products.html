@@ -110,7 +110,7 @@
             if (products.length > 0) {
                 products.forEach((product, index) => {
                     const newProduct = document.createElement('a');
-                    newProduct.href = `detail.html?index=${index}`; // Use index instead of id
+                    newProduct.href = `detail.html?index=${index}`; 
                     newProduct.classList.add('item');
                     newProduct.innerHTML = `
                         <img src="${product.image}" alt="${product.name}">
