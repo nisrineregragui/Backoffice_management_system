@@ -26,11 +26,11 @@
                         </span>
                     </button>
                 </div>
-                <div class="description"></div>
+                <!-- <div class="description"></div> -->
             </div>
         </div>
 
-        <div class="title">More Products</div>
+        <div class="title">More Products </div>
         <div class="listProduct"></div>
     </div>
 
@@ -54,8 +54,8 @@
             const detail = document.querySelector('.detail');
             detail.querySelector('.image img').src = thisProduct.image;
             detail.querySelector('.name').innerText = thisProduct.name;
-            detail.querySelector('.price').innerText = '$' + thisProduct.price.toFixed(2);
-            detail.querySelector('.description').innerText = thisProduct.description || "No description available.";
+            detail.querySelector('.price').innerText = 'DH' + thisProduct.price.toFixed(2);
+            // detail.querySelector('.description').innerText = thisProduct.description || "No description available.";
 
             // Populate the "Similar Products" section
             const listProduct = document.querySelector('.listProduct');
