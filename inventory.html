@@ -8,7 +8,7 @@
 	<!-- My CSS -->
 	<link rel="stylesheet" href="style.css">
 
-	<title>AdminHub</title>
+	<title>Inventory</title>
 </head>
 <body>
     <section id="sidebar">
@@ -57,7 +57,7 @@
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="#" class="logout">
+				<a href="login.html" class="logout">
 					<i class='bx bx-log-out'></i>
 
 					<span class="text">Logout</span>
@@ -138,64 +138,136 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-          const searchInput = document.getElementById('searchInput');
-          const productTable = document.getElementById('productTable');
-          const tableBody = productTable.querySelector('tbody');
-          let allProducts = [];
+    document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const productTable = document.getElementById('productTable');
+    const tableBody = productTable.querySelector('tbody');
+    let allProducts = [];
 
-          function loadProducts() {
-              allProducts = JSON.parse(localStorage.getItem('Products')) || [];
-              renderProducts(allProducts);
-          }
+    function loadProducts() {
+        allProducts = JSON.parse(localStorage.getItem('Products')) || [];
+        renderProducts(allProducts);
+    }
 
-          function renderProducts(products) {
-              tableBody.innerHTML = '';
-              products.forEach(product => {
-                  const row = document.createElement('tr');
-                  row.innerHTML = `
-                      <td>${product.id}</td>
-                      <td>${product.name}</td>
-                      <td>${product.items}</td>
-                      <td>${product.marque}</td>
-                      <td class="quantity ${getQuantityClass(product.quantity)}">${product.quantity}</td>
-                      <td>${product.price}</td>
-                  `;
-                  tableBody.appendChild(row);
-              });
-          }
+    function renderProducts(products) {
+        tableBody.innerHTML = '';
+        products.forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.items}</td>
+                <td>${product.marque}</td>
+                <td>${product.quantity}</td>
+                <td>${product.price}</td>
+                <td>
+                    <button class="edit-btn" data-id="${product.id}"><i class='bx bx-edit'></i></button>
+                    <button class="delete-btn" data-id="${product.id}"><i class='bx bx-trash'></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        addButtonListeners();
+    }
 
-          function getQuantityClass(quantity) {
-              if (quantity == 0) return 'no-quantity';
-              if (quantity < 5) return 'low-quantity';
-              return 'high-quantity';
-          }
+    //  function getQuantityClass(quantity) {
+    //  if (quantity == 0) return 'no-quantity';
+    //      if (quantity < 5) return 'low-quantity';
+    //      return 'high-quantity';
+    //  }
 
-          function searchProducts(query) {
-              query = query.toLowerCase();
-              const filteredProducts = allProducts.filter(product => 
-                  product.name.toLowerCase().includes(query)
-              );
-              renderProducts(filteredProducts);
-          }
+    function searchProducts(query) {
+        query = query.toLowerCase();
+        const filteredProducts = allProducts.filter(product => 
+            product.name.toLowerCase().includes(query)
+        );
+        renderProducts(filteredProducts);
+    }
 
-          searchInput.addEventListener('input', (e) => {
-              searchProducts(e.target.value);
-          });
+    function addButtonListeners() {
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', handleEdit);
+        });
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', handleDelete);
+        });
+    }
 
-          document.getElementById("addNew").addEventListener("click", () => {
-              window.location.href = 'add_new_product.html';
-          });
+    function handleEdit(e) {
+        const productId = e.currentTarget.getAttribute('data-id');
+        const product = allProducts.find(p => p.id == productId);
+        if (product) {
+            const newName = prompt('Enter new name for product:', product.name);
+            const newItems = prompt('Enter new items for product:', product.items);
+            const newMarque = prompt('Enter new brand for product:', product.marque);
+            const newQuantity = prompt('Enter new quantity for product:', product.quantity);
+            const newPrice = prompt('Enter new price for product:', product.price);
 
-        //   document.getElementById("clearLocalStorage").addEventListener("click", () => {
-        //       if (confirm("Are you sure you want to clear all data?")) {
-        //           localStorage.removeItem('Products');
-        //           loadProducts();
-        //       }
-        //   });
 
-          loadProducts();
-      });
+    if (newName) {
+    product.name = newName;
+}
+
+if (newItems) {
+    product.items = newItems;
+}
+
+if (newMarque) {
+    product.marque = newMarque;
+}
+
+if (newQuantity && validateQuantity(newQuantity)) {
+    product.quantity = parseInt(newQuantity) || 0;
+}
+
+if (newPrice && validatePrice(newPrice)) {
+    product.price = parseFloat(newPrice);
+}
+
+
+            updateLocalStorage();
+            renderProducts(allProducts);
+        }
+    }
+
+    
+
+
+
+
+
+function validateQuantity(quantity) {
+    return !isNaN(quantity) && quantity > 0;
+}
+
+function validatePrice(price) {
+    return !isNaN(price) && price >= 0;
+}
+    function handleDelete(e) {
+        const productId = e.currentTarget.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this product?')) {
+            allProducts = allProducts.filter(p => p.id != productId);
+            updateLocalStorage();
+            renderProducts(allProducts);
+        }
+    }
+
+    function updateLocalStorage() {
+        localStorage.setItem('Products', JSON.stringify(allProducts));
+    }
+
+    searchInput.addEventListener('input', (e) => {
+        searchProducts(e.target.value);
+    });
+
+    document.getElementById("addNew").addEventListener("click", () => {
+        window.location.href = 'add_new_product.html';
+    });
+
+    loadProducts();
+});
+
+
   </script>
 
     
@@ -210,6 +282,7 @@
                font-family: Arial, sans-serif;
                margin: 0;
                padding: 0;
+               
            }
            header {
                display: flex;
@@ -521,7 +594,7 @@ table{
  );
  height: 80%;
 }
-.low-quantity {
+/* .low-quantity {
                color: #c2a87e;
            } 
            .no-quantity {
@@ -529,9 +602,8 @@ table{
            }
            .high-quantity {
                color: #70c1d3;
-           }
+           } */
 </style>
 <script src="script.js"></script>
 </body>
 </html>
-
