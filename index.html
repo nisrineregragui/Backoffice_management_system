@@ -7,8 +7,10 @@
 <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-	<title>E-com</title>
+	
+    <title>Dynamic Dashboard</title>
 </head>
 <body>
 
@@ -60,7 +62,7 @@
 		</ul>
 		<ul class="side-menu">
 			<li>
-				<a href="#" class="logout">
+				<a href="login.html" class="logout">
 					<i class='bx bx-log-out'></i>
 
 					<span class="text">Logout</span>
@@ -87,6 +89,181 @@
 				
 			</a>
 		</nav>
+		<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        
+        <div class="chart-container">
+            <h2>Product Quantities</h2>
+            <canvas id="productChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Customers per City</h2>
+            <canvas id="customerChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Suppliers per Product</h2>
+            <canvas id="supplierChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Function to get random color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Product Chart
+        function createProductChart() {
+            const products = JSON.parse(localStorage.getItem('Products')) || [];
+            const productNames = products.map(product => product.name);
+            const productQuantities = products.map(product => product.quantity);
+            const productColors = products.map(() => getRandomColor());
+
+            const ctx = document.getElementById('productChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: productNames,
+                    datasets: [{
+                        label: 'Quantity',
+                        data: productQuantities,
+                        backgroundColor: productColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Customer Chart
+        function createCustomerChart() {
+            const customers = JSON.parse(localStorage.getItem('Clients')) || [];
+            const cityCounts = {};
+            customers.forEach(customer => {
+                cityCounts[customer.city] = (cityCounts[customer.city] || 0) + 1;
+            });
+
+            const cities = Object.keys(cityCounts);
+            const customerCounts = Object.values(cityCounts);
+            const cityColors = cities.map(() => getRandomColor());
+
+            const ctx = document.getElementById('customerChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: cities,
+                    datasets: [{
+                        data: customerCounts,
+                        backgroundColor: cityColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Customers per City'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Supplier Chart
+        function createSupplierChart() {
+            const suppliers = JSON.parse(localStorage.getItem('suppliers')) || [];
+            const productSuppliers = {};
+            suppliers.forEach(supplier => {
+                const products = supplier.products.split(',').map(p => p.trim());
+                products.forEach(product => {
+                    productSuppliers[product] = (productSuppliers[product] || 0) + 1;
+                });
+            });
+
+            const products = Object.keys(productSuppliers);
+            const supplierCounts = Object.values(productSuppliers);
+            const productColors = products.map(() => getRandomColor());
+
+            const ctx = document.getElementById('supplierChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: products,
+                    datasets: [{
+                        data: supplierCounts,
+                        backgroundColor: productColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Suppliers per Product'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create all charts when the page loads
+        window.onload = function() {
+            createProductChart();
+            createCustomerChart();
+            createSupplierChart();
+        };
+    </script>
+</body>
+</html>
 
 	<script src="script.js"></script>
 </body>
