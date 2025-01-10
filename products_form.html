@@ -55,19 +55,36 @@
             font-size: 1rem;
         }
 
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+        /* Style for both buttons */
+button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+}
 
-        button:hover {
-            background-color: var(--button-hover);
-        }
+button:hover {
+    background-color: var(--button-hover);
+}
 
-        .button-upload {
+/* Style specifically for the Cancel button */
+button[type="button"] {
+    background-color: var(--secondary-color);
+    font-size: 0.875rem; /* Slightly smaller font size */
+    padding: 0.5rem 1rem; /* Smaller padding */
+    
+}
+
+button[type="button"]:hover,button[type="submit"]:hover {
+    background-color: #34495e; /* Slightly darker shade for hover */
+    color: #fff; /* Ensure text is readable */
+}
+
+.button-upload {
             background: linear-gradient(180deg, hsla(45, 80%, 60%, 0.1), hsla(45, 80%, 60%, 0)), hsl(45, 85%, 50%);
             color: #fff;
             border: none;
@@ -83,6 +100,8 @@
         .button-upload input[type="file"] {
             display: none;
         }
+
+
     </style>
 </head>
 <body>
@@ -96,6 +115,8 @@
             <input type="text" id="productBrand" placeholder="Product Name" required>
             <input type="number" id="productPrice" placeholder="Price" step="0.01" required>
             <button type="submit">Add Product</button>
+            <button type="button" onclick="window.location.href = 'products.html';">Cancel</button>
+
         </form>
     </div>
 
